@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { authService } from "./lib/services";
 
 // Define auth routes that should redirect to /leads if user is authenticated
-const authRoutes = ["/", "/signin", "/signup", "/register"];
+const authRoutes = ["/", "/signin", "/signup"];
 
 // Define protected routes that require authentication
 const protectedRoutes = ["/leads"];
 
-export function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get("access_token")?.value;
 
@@ -24,7 +25,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/leads", request.url));
   }
 
-  // If user is not authenticated and trying to access protected routes, redirect to /signin
+  // If user is not authenticated and trying to access protected routes, redirect to /signup
   if (!accessToken && isProtectedRoute) {
     return NextResponse.redirect(new URL("/signup", request.url));
   }
@@ -37,7 +38,7 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
+     * - api (API routes - these handle their own auth)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)

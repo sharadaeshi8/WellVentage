@@ -73,6 +73,7 @@ export class AuthController {
         lastName: user.lastName,
         profilePicture: user.profilePicture,
         role: user.role,
+        accessToken: req.cookies.get('access_token')?.value,
       },
     };
   }
