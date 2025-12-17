@@ -293,6 +293,10 @@ export default function Sidebar() {
     try {
       // Call backend to clear the access_token cookie
       await authService.logout();
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
